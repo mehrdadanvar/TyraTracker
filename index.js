@@ -58,8 +58,30 @@ class CT {
           : element.fulfillment.availability.Corporate.Quantity,
     };
   }
+  ///////////////////////////////////////////////////////////////////////
+  static async fetch_single_batch(product_numbers, store_id) {
+    if (product_numbers.length > 0) {
+      console.log("stop! Maxium 40 products allowed");
+      return;
+    } else {
+      let target_url = `${CT.price_url}?lang=en_CA&storeId=${store_id}`;
+      let target_codes = product_numbers.map((element) => {
+        return { code: element, lowStockThreshold: 0 };
+      });
+      try {
+        let response = await axios.post(target_url, { skus: target_codes }, { headers: CT.request_headers });
+        console.log(response.status, "response code");
+        let retrieved_skus = response.data.skus;
+        let cleaned_skus = retrieved_skus.map((product) => {
+          return this.clean_product(product);
+        });
+        return cleaned_skus;
+      } catch (error) {
+        error ? console.log(error.status) : "";
+      }
+    }
+  }
 }
-///////////////////////////////////////////////////////////////////////
 
 // console.log(CT);
 module.exports = CT;
