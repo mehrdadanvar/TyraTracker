@@ -47,6 +47,19 @@ class CT {
     }
   }
   ///////////////////////////////////////////////////////////////////////
+  static clean_product(element) {
+    return {
+      code: element.code,
+      price: element.currentPrice.value,
+      store_quantity: element.fulfillment.availability.quantity,
+      corporate_quantity:
+        element.fulfillment.availability.Corporate.Quantity === undefined
+          ? null
+          : element.fulfillment.availability.Corporate.Quantity,
+    };
+  }
 }
+///////////////////////////////////////////////////////////////////////
+
 // console.log(CT);
 module.exports = CT;
