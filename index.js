@@ -30,6 +30,23 @@ class CT {
     }
   }
   /////////////////////////////////////////////////////////////////
+  static async fetch_stores() {
+    try {
+      const database = client.db("tirestores");
+      const collection = database.collection("stores");
+      const stores = collection.find();
+      let cleaned_stores = [];
+      for await (let store of stores) {
+        cleaned_stores.push(store);
+      }
+      return cleaned_stores;
+    } catch (error) {
+      error ? console.log(error) : "";
+    } finally {
+      await client.close();
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////
 }
 // console.log(CT);
 module.exports = CT;
