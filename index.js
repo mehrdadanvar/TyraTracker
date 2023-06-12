@@ -77,10 +77,29 @@ class CT {
         });
         return cleaned_skus;
       } catch (error) {
-        error ? console.log(error.status) : "";
+        error ? console.log(error) : "";
       }
     }
   }
+  ///////////////////////////////////////////////////////////////////////
+  static async resolver(promis) {
+    let data = [];
+    await promis
+      .then((res) => {
+        console.log(res, "from resolver");
+        for (const item of res) {
+          item.then((res_1) => {
+            console.log(res_1.length, "end");
+            data.push(res_1);
+          });
+        }
+      })
+      .catch((error) => {
+        error ? console.log(error) : "";
+      });
+    console.log(data, "final data");
+  }
+  ///////////////////////////////////////////////////////////////////////
 }
 
 // console.log(CT);
