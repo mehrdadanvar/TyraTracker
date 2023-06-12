@@ -100,6 +100,27 @@ class CT {
     console.log(data, "final data");
   }
   ///////////////////////////////////////////////////////////////////////
+  static async inner_loop(n, outer_target, batch_size, store_id, minor_stop) {
+    let inner_scraped = [];
+    // console.log(outer_target, request_spree, "outer_target is");
+    let [lower, upper] = [Math.floor(n / batch_size), Math.ceil(n / batch_size)];
+    let remainder = n - lower * batch_size;
+    // console.table([lower, upper, remainder]);
+    for (let j = 0; j < upper; j++) {
+      console.log(`j from inner loop is ${j}`);
+      let inter = this.fetch_single_batch(outer_target.slice(j * batch_size, (j + 1) * batch_size), store_id);
+      inner_scraped.push(inter);
+      // inter.forEach((item) => {
+      //   console.log(`inner_scraped length is ${inner_scraped.length}`);
+      //   inner_scraped.push(item);
+      // });
+
+      // await this.timer(minor_stop);
+    }
+    return inner_scraped;
+    //this is a promise which is an array of arrays , later to be resolved
+  }
+  //////////////////////////////////////////////////////////////////////////
 }
 
 // console.log(CT);
