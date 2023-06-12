@@ -1,0 +1,31 @@
+{
+  "name": "tyre-tracker",
+  "version": "1.0.0",
+  "description": "programatically retrieve product data from Canadian Tire website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehrdadanvar/TyraTracker.git"
+  },
+  "keywords": [
+    "canadiantire",
+    "canadian-tire",
+    "product",
+    "data",
+    "web-scraping"
+  ],
+  "author": "mehrdad anvar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mehrdadanvar/TyraTracker/issues"
+  },
+  "homepage": "https://github.com/mehrdadanvar/TyraTracker#readme",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "dotenv": "^16.1.4",
+    "mongodb": "^5.6.0"
+  }
+}
