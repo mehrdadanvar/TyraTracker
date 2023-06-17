@@ -8,27 +8,24 @@ class CT {
   constructor(name) {
     this.name = name;
   }
+  /////////////////////////////////////////////////////////////////
   ///////////////// Statics ///////////////////////////////////////
   static request_headers = loaded_statics.ct_headers;
   static price_url = loaded_statics.price_url;
   static timer = (ms) => new Promise((res) => setTimeout(res, ms));
   /////////////////////////////////////////////////////////////////
   static async load_product_codes() {
-    try {
-      const database = client.db("codes");
-      const codes = database.collection("codes");
-      const skus = codes.find();
-      let cleaned_codes = [];
-      for await (const sku of skus) {
-        cleaned_codes.push(sku.codes);
-      }
-      return cleaned_codes[0];
-    } catch (error) {
-      error ? console.log(error) : "";
-    } finally {
-      await client.close();
-    }
+    let response = await fetch("https://tirecodes.pages.dev/");
+    let raw_text = await response.text();
+    //const regex = /{([^}]+)}/g;
+    let regex = /<body>([\s\S]*?)<\/body>/;
+    const match = regex.exec(raw_text);
+    const final = match[1].replace(/[\n\s]/g, "");
+    let data = JSON.parse(final);
+    return data.codes;
   }
+  /////////////////////////////////////////////////////////////////
+
   /////////////////////////////////////////////////////////////////
   static async fetch_stores() {
     try {
@@ -82,24 +79,7 @@ class CT {
     }
   }
   ///////////////////////////////////////////////////////////////////////
-  static async resolver(promis) {
-    let data = [];
-    await promis
-      .then((res) => {
-        console.log(res, "from resolver");
-        for (const item of res) {
-          item.then((res_1) => {
-            console.log(res_1.length, "end");
-            data.push(res_1);
-          });
-        }
-      })
-      .catch((error) => {
-        error ? console.log(error) : "";
-      });
-    console.log(data, "final data");
-  }
-  ///////////////////////////////////////////////////////////////////////
+
   static async inner_loop(n, outer_target, batch_size, store_id, minor_stop) {
     let inner_scraped = [];
     // console.log(outer_target, request_spree, "outer_target is");
@@ -123,5 +103,4 @@ class CT {
   //////////////////////////////////////////////////////////////////////////
 }
 
-// console.log(CT);
 module.exports = CT;
