@@ -1,8 +1,5 @@
 const axios = require("axios");
 const loaded_statics = require("./statics");
-require("dotenv").config();
-const { MongoClient } = require("mongodb");
-const client = new MongoClient(process.env.DB_URI);
 
 class CT {
   constructor(name) {
@@ -23,25 +20,6 @@ class CT {
     const final = match[1].replace(/[\n\s]/g, "");
     let data = JSON.parse(final);
     return data.codes;
-  }
-  /////////////////////////////////////////////////////////////////
-
-  /////////////////////////////////////////////////////////////////
-  static async fetch_stores() {
-    try {
-      const database = client.db("tirestores");
-      const collection = database.collection("stores");
-      const stores = collection.find();
-      let cleaned_stores = [];
-      for await (let store of stores) {
-        cleaned_stores.push(store);
-      }
-      return cleaned_stores;
-    } catch (error) {
-      error ? console.log(error) : "";
-    } finally {
-      await client.close();
-    }
   }
   ///////////////////////////////////////////////////////////////////////
   static clean_product(element) {
@@ -99,6 +77,19 @@ class CT {
     }
     return inner_scraped;
     //this is a promise which is an array of arrays , later to be resolved
+  }
+  //////////////////////////////////////////////////////////////////////////
+  static async fetch_multiple_batches(product_list, store_id, batch_size = 40, major_stop = 1000) {
+    let [final, n] = [[], product_list.length];
+    let [up_bound, low_bound] = [Math.ceil(n / batch_size), Math.floor(n / batch_size)];
+    for (let i = 0; i < up_bound; i++) {
+      console.log(`i is now ${i}`);
+      let target = product_list.slice(i * batch_size, (i + 1) * batch_size);
+      let inner_promise = this.fetch_single_batch(target, store_id);
+      final.push(inner_promise);
+      await this.timer(major_stop);
+    }
+    return final;
   }
   //////////////////////////////////////////////////////////////////////////
 }
